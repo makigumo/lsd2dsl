@@ -29,9 +29,9 @@ class ReferenceResolverRewriter : public TextRunVisitor {
         if (!_filesystem)
             return;
         auto& files = _filesystem->files();
-        auto it = files.find(std::filesystem::u8path(file));
+        auto it = files.find(std::filesystem::path(file));
         if (it != end(files)) {
-            file = it->u8string();
+            file = it->string();
         }
     }
 

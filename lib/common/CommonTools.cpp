@@ -8,7 +8,7 @@ std::ofstream openForWriting(std::filesystem::path path) {
     std::ofstream file(path, std::ios::binary);
     if (!file.is_open())
         throw std::runtime_error(
-            fmt::format("Can't open file for writing: {}", path.u8string()));
+            fmt::format("Can't open file for writing: {}", path.string()));
     return file;
 }
 
@@ -16,7 +16,7 @@ std::ifstream openForReading(std::filesystem::path path) {
     std::ifstream file(path, std::ios::binary);
     if (!file.is_open())
         throw std::runtime_error(
-            fmt::format("Can't open file for reading: {}", path.u8string()));
+            fmt::format("Can't open file for reading: {}", path.string()));
     return file;
 }
 

@@ -17,7 +17,7 @@ class TestLog : public Log {
 };
 
 inline std::vector<uint8_t> read_all_bytes(std::filesystem::path path) {
-    auto f = fopen(path.u8string().c_str(), "rb");
+    auto f = fopen(path.string().c_str(), "rb");
     if (!f)
         throw std::runtime_error("can't open file");
     fseek(f, 0, SEEK_END);
@@ -38,5 +38,5 @@ inline std::string read_all_text(std::filesystem::path path) {
 }
 
 inline std::filesystem::path testPath(const char* relative) {
-    return std::filesystem::u8path(fmt::format("{}/tests/{}", g_sourceDir, relative));
+    return std::filesystem::path(fmt::format("{}/tests/{}", g_sourceDir, relative));
 }

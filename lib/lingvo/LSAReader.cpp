@@ -81,7 +81,7 @@ void LSAReader::dump(std::filesystem::path path, Log& log) {
         if (samples.size() != entry.sampleSize)
             throw std::runtime_error("error reading LSA");
 
-        auto file = openForWriting(path / std::filesystem::u8path(name));
+        auto file = openForWriting(path / std::filesystem::path(name));
         file.write(wav.data(), wav.size());
 
         log.advance();
@@ -98,7 +98,7 @@ void decodeLSA(std::filesystem::path lsaPath, std::filesystem::path outputPath, 
     common::FileStream bstr(lsaPath);
     LSAReader reader(&bstr);
     reader.collectHeadings();
-    log.resetProgress(lsaPath.filename().u8string(), reader.entriesCount());
+    log.resetProgress(lsaPath.filename().string(), reader.entriesCount());
     reader.dump(lsaOutputDir, log);
 }
 

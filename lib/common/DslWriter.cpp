@@ -18,7 +18,7 @@ namespace dsl {
         _dsl = std::make_unique<std::ofstream>(_dslPath, std::ios::binary);
         if (!_dsl->is_open())
             throw std::runtime_error(
-                fmt::format("Can't open file for writing {}", _dslPath.u8string()));
+                fmt::format("Can't open file for writing {}", _dslPath.string()));
         _dsl->write(_utf16bom, sizeof(_utf16bom));
     }
 
@@ -51,7 +51,7 @@ namespace dsl {
         auto path = _dslPath;
         path.replace_extension("bmp");
 
-        write(u"#ICON_FILE\t\"" + toUtf16(path.filename().u8string()) + u"\"\n");
+        write(u"#ICON_FILE\t\"" + path.filename().u16string() + u"\"\n");
 
         auto file = openForWriting(path);
         file.write(reinterpret_cast<const char*>(icon.data()), icon.size());

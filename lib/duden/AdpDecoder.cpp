@@ -40,11 +40,11 @@ void duden::decodeAdp(const std::vector<char>& input, std::vector<int16_t>& samp
 }
 
 bool duden::replaceAdpExtWithWav(std::string& name) {
-    auto asPath = std::filesystem::u8path(name);
-    auto ext = boost::to_lower_copy(asPath.extension().u8string());
+    auto asPath = std::filesystem::path(name);
+    auto ext = boost::to_lower_copy(asPath.extension().string());
     if (ext == ".adp") {
         asPath.replace_extension(".wav");
-        name = asPath.u8string();
+        name = asPath.string();
         return true;
     }
     return false;

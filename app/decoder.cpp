@@ -387,16 +387,16 @@ int lsd2dsl_main(int argc, char* argv[]) {
         return 0;
     }
 
-    const auto lsdPath = std::filesystem::u8path(lsdPathStr);
-    const auto lsaPath = std::filesystem::u8path(lsaPathStr);
-    const auto dudenPath = std::filesystem::u8path(dudenPathStr);
-    const auto bofPath = std::filesystem::u8path(bofPathStr);
-    const auto textPath = std::filesystem::u8path(textPathStr);
-    const auto hicPath = std::filesystem::u8path(hicPathStr);
-    const auto fsiPath = std::filesystem::u8path(fsiPathStr);
-    const auto adpPath = std::filesystem::u8path(adpPathStr);
-    auto outputPath = std::filesystem::u8path(outputPathStr);
-    const auto idxPath = std::filesystem::u8path(idxPathStr);
+    const auto lsdPath = std::filesystem::path(lsdPathStr);
+    const auto lsaPath = std::filesystem::path(lsaPathStr);
+    const auto dudenPath = std::filesystem::path(dudenPathStr);
+    const auto bofPath = std::filesystem::path(bofPathStr);
+    const auto textPath = std::filesystem::path(textPathStr);
+    const auto hicPath = std::filesystem::path(hicPathStr);
+    const auto fsiPath = std::filesystem::path(fsiPathStr);
+    const auto adpPath = std::filesystem::path(adpPathStr);
+    auto outputPath = std::filesystem::path(outputPathStr);
+    const auto idxPath = std::filesystem::path(idxPathStr);
 
     ConsoleLog log(verbose);
 

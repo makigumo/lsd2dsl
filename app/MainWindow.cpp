@@ -51,7 +51,7 @@ protected:
     std::unique_ptr<common::BitStreamAdapter> _adapter;
 public:
     DictionaryEntry(QString path)
-        : _stream(new common::FileStream(std::filesystem::u8path(path.toStdString()))),
+        : _stream(new common::FileStream(std::filesystem::path(path.toStdString()))),
           _path(path),
           _fileName(QFileInfo(path).fileName()),
           _adapter(new common::BitStreamAdapter(_stream.get()))
@@ -105,8 +105,8 @@ public:
     }
     void dump(QString outDir, Log& log) override {
         lingvo::writeDSL(&_reader,
-                 std::filesystem::u8path(fileName().toStdString()),
-                 std::filesystem::u8path(outDir.toStdString()),
+                 std::filesystem::path(fileName().toStdString()),
+                 std::filesystem::path(outDir.toStdString()),
                  false,
                  log);
     }
@@ -127,8 +127,8 @@ public:
     const std::vector<unsigned char> &icon() override { return _icon; }
     bool supported() override { return true; }
     void dump(QString outDir, Log& log) override {
-        decodeLSA(std::filesystem::u8path(path().toStdString()),
-                  std::filesystem::u8path(outDir.toStdString()),
+        decodeLSA(std::filesystem::path(path().toStdString()),
+                  std::filesystem::path(outDir.toStdString()),
                   log);
     }
 };
@@ -144,7 +144,7 @@ class DudenDictionaryEntry : public DictionaryEntry {
 
 public:
     DudenDictionaryEntry(QString path, int index, duden::FileSystem* fs) : DictionaryEntry(path), _index(index) {
-        auto infPath = std::filesystem::u8path(path.toStdString());
+        auto infPath = std::filesystem::path(path.toStdString());
         duden::Dictionary dict(fs, infPath, index);
         _name = QString::fromStdString(dict.ld().name);
         _version = QString::fromStdString(fmt::format("{:x}", dict.inf().version));
@@ -162,8 +162,8 @@ public:
     const std::vector<unsigned char> &icon() override { return _icon; }
     bool supported() override { return _supported; }
     void dump(QString outDir, Log& log) override {
-        duden::writeDSL(std::filesystem::u8path(path().toStdString()),
-                        std::filesystem::u8path(outDir.toStdString()),
+        duden::writeDSL(std::filesystem::path(path().toStdString()),
+                        std::filesystem::path(outDir.toStdString()),
                         _index,
                         log);
     }
@@ -211,7 +211,7 @@ public:
                 }
 #ifdef ENABLE_DUDEN
                 if (ext == "inf") {
-                    auto infPath = std::filesystem::u8path(path.toStdString());
+                    auto infPath = std::filesystem::path(path.toStdString());
                     common::FileStream infStream(infPath);
                     duden::FileSystem fs(infPath.parent_path());
                     auto infs = duden::parseInfFile(&infStream, &fs);

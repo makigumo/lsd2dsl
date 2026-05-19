@@ -26,7 +26,7 @@ class ResourceFileSystem : public IFileSystem {
 public:
     ResourceFileSystem(const std::vector<std::string>& names) {
         for (auto& name : names) {
-            _paths.insert(std::filesystem::u8path(name));
+            _paths.insert(std::filesystem::path(name));
         }
     }
 
@@ -94,7 +94,7 @@ void writeDSL(std::filesystem::path infPath,
     auto groups = groupHicEntries(entries);
 
     dsl::Writer writer(outputPath, dslFileName);
-    auto overlayPath = std::filesystem::u8path(writer.dslFilePath().u8string() + ".files.zip");
+    auto overlayPath = std::filesystem::path(writer.dslFilePath().string() + ".files.zip");
     ZipWriter zip(overlayPath);
 
     ResourceFiles resources;
@@ -112,7 +112,7 @@ void writeDSL(std::filesystem::path infPath,
         auto stream = std::make_unique<std::stringstream>();
         stream->write(vec.data(), vec.size());
         stream->seekg(0);
-        auto filename = std::filesystem::u8path(pack.bof).stem().u8string();
+        auto filename = std::filesystem::path(pack.bof).stem().string();
         resources[filename] = std::move(stream);
     }
 

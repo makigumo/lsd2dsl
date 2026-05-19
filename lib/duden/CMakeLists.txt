@@ -24,9 +24,10 @@ add_library(${PROJECT_NAME} STATIC
     unzip/inflate.c
 )
 
+set_source_files_properties(unzip/inflate.c PROPERTIES COMPILE_FLAGS -Wno-int-conversion)
+
 target_link_libraries(${PROJECT_NAME}
     common
-    Boost::system
     Qt6::WebEngineWidgets
     Qt6::Pdf
     fmt::fmt-header-only

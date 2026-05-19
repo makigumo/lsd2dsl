@@ -6,8 +6,8 @@ namespace duden {
 
 bool CaseInsensitiveLess::operator()(const std::filesystem::path& left,
                                      const std::filesystem::path& right) const {
-    auto qleft = QString::fromStdString(left.u8string());
-    auto qright = QString::fromStdString(right.u8string());
+    auto qleft = QString::fromStdString(left.string());
+    auto qright = QString::fromStdString(right.string());
     return qleft.compare(qright, Qt::CaseInsensitive) < 0;
 }
 

@@ -49,17 +49,17 @@ TEST(duden, HicNodeTest1) {
     auto at = [&](int i) { return std::get<HicLeaf>(block[i]); };
 
     ASSERT_EQ(13, block.size());
-    ASSERT_EQ(u8"Inhalt", at(0).heading);
-    ASSERT_EQ(u8"Vorwort", at(1).heading);
-    ASSERT_EQ(u8"Impressum", at(2).heading);
-    ASSERT_EQ(u8"Zur Einrichtung des Wörterverzeichnisses", at(3).heading);
-    ASSERT_EQ(u8"Fremdwörter: Bedrohung oder Bereicherung", at(4).heading);
-    ASSERT_EQ(u8"Ein Fremdwort – was ist das?", at(5).heading);
+    ASSERT_EQ("Inhalt", at(0).heading);
+    ASSERT_EQ("Vorwort", at(1).heading);
+    ASSERT_EQ("Impressum", at(2).heading);
+    ASSERT_EQ("Zur Einrichtung des Wörterverzeichnisses", at(3).heading);
+    ASSERT_EQ("Fremdwörter: Bedrohung oder Bereicherung", at(4).heading);
+    ASSERT_EQ("Ein Fremdwort – was ist das?", at(5).heading);
     ASSERT_EQ(
-        u8"Fremdes Wort im deutschen Satz: Schreibung, Aussprache und Grammatik",
+        "Fremdes Wort im deutschen Satz: Schreibung, Aussprache und Grammatik",
         at(6).heading);
-    ASSERT_EQ(u8"Fremdwörter in Zahlen", at(7).heading);
-    ASSERT_EQ(u8"Fremdwörter – eine Stilfrage", at(10).heading);
+    ASSERT_EQ("Fremdwörter in Zahlen", at(7).heading);
+    ASSERT_EQ("Fremdwörter – eine Stilfrage", at(10).heading);
 
     ASSERT_EQ(0, at(0).textOffset);
     ASSERT_EQ(HicEntryType::Plain, at(0).type);
@@ -74,10 +74,10 @@ TEST(duden, HicNodeTest2) {
     auto at = [&](int i) { return std::get<HicLeaf>(block[i]); };
 
     ASSERT_EQ(20, block.size());
-    ASSERT_EQ(u8"absent", at(1).heading);
-    ASSERT_EQ(u8"absentia", at(2).heading);
-    ASSERT_EQ(u8"absentieren", at(3).heading);
-    ASSERT_EQ(u8"Absolventin", at(15).heading);
+    ASSERT_EQ("absent", at(1).heading);
+    ASSERT_EQ("absentia", at(2).heading);
+    ASSERT_EQ("absentieren", at(3).heading);
+    ASSERT_EQ("Absolventin", at(15).heading);
 }
 
 TEST(duden, HicNodeTest3) {
@@ -87,11 +87,11 @@ TEST(duden, HicNodeTest3) {
     auto at = [&](int i) { return std::get<HicLeaf>(block[i]); };
 
     ASSERT_EQ(18, block.size());
-    ASSERT_EQ(u8"Abd ar-Rahman Putra", at(0).heading);
+    ASSERT_EQ("Abd ar-Rahman Putra", at(0).heading);
     ASSERT_EQ(HicEntryType::Plain, at(0).type);
     ASSERT_EQ(0x51286, at(0).textOffset);
 
-    ASSERT_EQ(u8"Abderemane", at(17).heading);
+    ASSERT_EQ("Abderemane", at(17).heading);
     ASSERT_EQ(HicEntryType::Plain, at(17).type);
     ASSERT_EQ(0x52a02, at(17).textOffset);
 }
@@ -103,9 +103,9 @@ TEST(duden, HicNodeTest4) {
     auto at = [&](int i) { return std::get<HicLeaf>(block[i]); };
 
     ASSERT_EQ(18, block.size());
-    ASSERT_EQ(u8"8-bit-Zeichensatz", at(0).heading);
-    ASSERT_EQ(u8"a.", at(10).heading);
-    ASSERT_EQ(u8"à", at(11).heading);
+    ASSERT_EQ("8-bit-Zeichensatz", at(0).heading);
+    ASSERT_EQ("a.", at(10).heading);
+    ASSERT_EQ("à", at(11).heading);
 }
 
 TEST(duden, HicNodeTest_ParseNonLeafs) {
@@ -115,12 +115,12 @@ TEST(duden, HicNodeTest_ParseNonLeafs) {
     auto at = [&](int i) { return std::get<HicNode>(block[i]); };
 
     ASSERT_EQ(2, block.size());
-    EXPECT_EQ(u8"Zusätze", at(0).heading);
+    EXPECT_EQ("Zusätze", at(0).heading);
     EXPECT_EQ(13, at(0).count);
     EXPECT_EQ(-67283, at(0).delta);
     EXPECT_EQ(151, at(0).hicOffset);
 
-    EXPECT_EQ(u8"Wörterverzeichnis", at(1).heading);
+    EXPECT_EQ("Wörterverzeichnis", at(1).heading);
     EXPECT_EQ(10, at(1).count);
     EXPECT_EQ(-7912591, at(1).delta);
     EXPECT_EQ(667, at(1).hicOffset);
@@ -156,7 +156,7 @@ TEST(duden, ParseSingleItemFsiBlockUnicode) {
     auto entries = parseFsiBlock(&stream);
 
     ASSERT_EQ(1, entries.size());
-    ASSERT_EQ(u8"EURä.BMP", entries[0].name);
+    ASSERT_EQ("EURä.BMP", entries[0].name);
     ASSERT_EQ(0, entries[0].offset);
     ASSERT_EQ(1318, entries[0].size);
 }
@@ -245,10 +245,10 @@ public:
     }
 
     std::unique_ptr<common::IRandomAccessStream> open(std::filesystem::path path) override {
-        if (boost::algorithm::to_lower_copy(path.extension().u8string()) == ".ld") {
+        if (boost::algorithm::to_lower_copy(path.extension().string()) == ".ld") {
             _lds.push_back(std::make_unique<std::string>());
             auto& ld = _lds.back();
-            *ld = "K" + path.stem().u8string();
+            *ld = "K" + path.stem().string();
             return std::make_unique<InMemoryStream>(ld->c_str(), ld->size());
         }
         throw std::runtime_error("");
@@ -454,7 +454,7 @@ TEST(duden, Unicode) {
         0x2F, 0xA2, 0xDD, 0xA2, 0xB6, 0xA2, 0xDD, 0xA2, 0xB4, 0x2C, 0x00
     };
     auto utf = dudenToUtf8((const char*)text);
-    ASSERT_EQ(u8"['ælaɪd 'fɔːsɪz 'sentrl 'jʊərəp,", utf);
+    ASSERT_EQ("['ælaɪd 'fɔːsɪz 'sentrl 'jʊərəp,", utf);
 }
 
 TEST(duden, UnicodeIgnoreEscapesInsideRefs) {
@@ -465,7 +465,7 @@ TEST(duden, UnicodeIgnoreEscapesInsideRefs) {
         0x20, 0x7D, 0x4D, 0xA0, 0xFC, 0xA3, 0xE9, 0x6E, 0x64, 0x65, 0x6E, 0x00
     };
     auto utf = dudenToUtf8((const char*)text);
-    ASSERT_EQ(u8"Mụ̈nden\\S{;.MK;;Hannoversch Münden }Mụ̈nden", utf);
+    ASSERT_EQ("Mụ̈nden\\S{;.MK;;Hannoversch Münden }Mụ̈nden", utf);
 }
 
 TEST(duden, UnicodeHandleEscapesInsideArticleRefs) {
@@ -475,7 +475,7 @@ TEST(duden, UnicodeHandleEscapesInsideArticleRefs) {
         0x2E, 0x00
     };
     auto utf = dudenToUtf8((const char*)text);
-    ASSERT_EQ(u8"t \\S{säugen;:004872222}.", utf);
+    ASSERT_EQ("t \\S{säugen;:004872222}.", utf);
 }
 
 TEST(duden, UnicodeDontIgnoreEscapesInsideTables) {
@@ -486,7 +486,7 @@ TEST(duden, UnicodeDontIgnoreEscapesInsideTables) {
         0x7D, 0x00
     };
     auto utf = dudenToUtf8((const char*)text);
-    ASSERT_EQ(u8"Mụ̈nden\\tab{Mụ̈nden}", utf);
+    ASSERT_EQ("Mụ̈nden\\tab{Mụ̈nden}", utf);
 }
 
 TEST(duden, UnicodeIgnoreEscapesInsideEscapeC) {
@@ -494,13 +494,13 @@ TEST(duden, UnicodeIgnoreEscapesInsideEscapeC) {
         'a', '@', 'C', 'a', 0xf6, 'b', '\n', 'c', 0
     };
     auto utf = dudenToUtf8((const char*)text);
-    ASSERT_EQ(u8"a@Caöb\nc", utf);
+    ASSERT_EQ("a@Caöb\nc", utf);
 
     const uint8_t text2[] = {
         'a', '@', 'C', 'a', 0xf6, 'b', 0
     };
     utf = dudenToUtf8((const char*)text2);
-    ASSERT_EQ(u8"a@Caöb", utf);
+    ASSERT_EQ("a@Caöb", utf);
 }
 
 TEST(duden, SimpleLdFileTest) {
@@ -774,21 +774,21 @@ TEST(duden, ResolveInlineImageReference) {
     auto expected = "TextRun\n"
                     "  InlineImageRun; name=euro.bmp; secondary=\n";
     ASSERT_EQ(expected, tree);
-    ASSERT_EQ(u8"[s]euro.bmp[/s]", printDsl(run));
+    ASSERT_EQ("[s]euro.bmp[/s]", printDsl(run));
 }
 
 TEST(duden, ResolveAudioSReference) {
-    auto text = u8"\\S{;.Ispeaker.bmp;T;à la longue.Adp}";
+    auto text = "\\S{;.Ispeaker.bmp;T;à la longue.Adp}";
     ParsingContext context;
     auto run = parseDudenText(context, text);
     FileStream stream(testPath("duden_testfiles/simple.ld"));
     auto ld = parseLdFile(&stream);
     resolveReferences(context, run, ld, nullptr);
     auto tree = printTree(run);
-    auto expected = u8"TextRun\n"
-                    u8"  InlineImageRun; name=speaker.bmp; secondary=à la longue.wav\n";
+    auto expected = "TextRun\n"
+                    "  InlineImageRun; name=speaker.bmp; secondary=à la longue.wav\n";
     ASSERT_EQ(expected, tree);
-    ASSERT_EQ(u8"[s]à la longue.wav[/s]", printDsl(run));
+    ASSERT_EQ("[s]à la longue.wav[/s]", printDsl(run));
 }
 
 TEST(duden, ResolveAudioWReference) {
@@ -809,7 +809,7 @@ TEST(duden, ResolveAudioWReference) {
                     "    TextRun\n"
                     "      PlainRun: \n";
     ASSERT_EQ(expected, tree);
-    ASSERT_EQ(u8"[s]abgewöhnen_92.wav[/s] ", printDsl(run));
+    ASSERT_EQ("[s]abgewöhnen_92.wav[/s] ", printDsl(run));
 }
 
 TEST(duden, ResolveAudioWReference2) {
@@ -861,10 +861,10 @@ class TestFileSystem3 : public IFileSystem {
 public:
     TestFileSystem3() {
         std::filesystem::path root = "";
-        _files = {std::filesystem::u8path(u8"123.bmp"),
-                  std::filesystem::u8path(u8"euro.bmp"),
-                  std::filesystem::u8path(u8"АбfD.BMP"),
-                  std::filesystem::u8path(u8"UNABKöMMLICH1V.WAV")};
+        _files = {std::filesystem::path("123.bmp"),
+                  std::filesystem::path("euro.bmp"),
+                  std::filesystem::path("АбfD.BMP"),
+                  std::filesystem::path("UNABKöMMLICH1V.WAV")};
     }
      std::unique_ptr<common::IRandomAccessStream> open(std::filesystem::path) override {
         return {};
@@ -876,25 +876,25 @@ public:
 };
 
 TEST(duden, ResolveInlineImageReferenceInconstistentCase) {
-    auto text = u8"\\S{;.IаБFd.bmp;T}";
+    auto text = "\\S{;.IаБFd.bmp;T}";
     ParsingContext context;
     auto run = parseDudenText(context, text);
     FileStream stream(testPath("duden_testfiles/simple.ld"));
     auto ld = parseLdFile(&stream);
     TestFileSystem3 fs;
     resolveReferences(context, run, ld, &fs);
-    ASSERT_EQ(u8"[s]АбfD.BMP[/s]", printDsl(run));
+    ASSERT_EQ("[s]АбfD.BMP[/s]", printDsl(run));
 }
 
 TEST(duden, ResolveInlineImageReferenceInconstistentCase2) {
-    auto text = u8"\\S{;.Ispeaker.bmp;T;unabkömmlich1v.adp}";
+    auto text = "\\S{;.Ispeaker.bmp;T;unabkömmlich1v.adp}";
     ParsingContext context;
     auto run = parseDudenText(context, text);
     FileStream stream(testPath("duden_testfiles/simple.ld"));
     auto ld = parseLdFile(&stream);
     TestFileSystem3 fs;
     resolveReferences(context, run, ld, &fs);
-    ASSERT_EQ(u8"[s]UNABKöMMLICH1V.WAV[/s]", printDsl(run));
+    ASSERT_EQ("[s]UNABKöMMLICH1V.WAV[/s]", printDsl(run));
 }
 
 TEST(duden, InlinePictureReference) {
@@ -914,9 +914,9 @@ TEST(duden, InlinePictureReference) {
     auto description = dynamic_cast<PlainRun*>(picture->description()->runs().front());
     ASSERT_NE(nullptr, description);
 
-    ASSERT_EQ(u8"© Bibliographisches Institut & F. A. Brockhaus, Mannheim", picture->copyright());
-    ASSERT_EQ(u8"b5bi1607.BMP", picture->imageFileName());
-    ASSERT_EQ(u8"Die vom Fahrstrahl in gleichen Zeitintervallen überstrichenen Flächen (rosa) sind gleich groß", description->text());
+    ASSERT_EQ("© Bibliographisches Institut & F. A. Brockhaus, Mannheim", picture->copyright());
+    ASSERT_EQ("b5bi1607.BMP", picture->imageFileName());
+    ASSERT_EQ("Die vom Fahrstrahl in gleichen Zeitintervallen überstrichenen Flächen (rosa) sind gleich groß", description->text());
 }
 
 TEST_F(duden_qt, ParseTextTable1) {
@@ -1369,7 +1369,7 @@ TEST(duden, ParseUpwardsArrow) {
     std::string text = "@Sabc";
     ParsingContext context;
     auto run = parseDudenText(context, text);
-    ASSERT_EQ(u8"↑abc", printDsl(run));
+    ASSERT_EQ("↑abc", printDsl(run));
 }
 
 TEST(duden, ParseNestedStickyTag) {
@@ -1872,7 +1872,7 @@ TEST(duden, IgnoreZeroesInDecodedText) {
         0xA2, 0xA5, 0xA4, 0x55, 0xA2, 0xAD, 0xA4, 0x56, 0x5C, 0
     };
     auto decoded = dudenToUtf8(reinterpret_cast<char*>(data));
-    ASSERT_EQ(u8"a͜i\\", decoded);
+    ASSERT_EQ("a͜i\\", decoded);
 }
 
 TEST(duden, TreatLowerSEscapeAsItalic) {

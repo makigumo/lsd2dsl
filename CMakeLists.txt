@@ -14,7 +14,8 @@ include_directories("${CMAKE_BINARY_DIR}")
 
 set(CMAKE_CXX_STANDARD 20)
 
-find_package(Boost 1.60 COMPONENTS system program_options REQUIRED)
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost 1.90 COMPONENTS program_options REQUIRED)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RelWithDebInfo)

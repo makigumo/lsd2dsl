@@ -12,8 +12,8 @@ void writeDSL(const LSDDictionary* reader,
               bool dumb,
               Log& log)
 {
-    dsl::Writer writer(outputPath, lsdName.replace_extension().u8string());
-    std::filesystem::path overlayPath = std::filesystem::u8path(writer.dslFilePath().u8string() + ".files.zip");
+    dsl::Writer writer(outputPath, lsdName.replace_extension().string());
+    std::filesystem::path overlayPath = std::filesystem::path(writer.dslFilePath().string() + ".files.zip");
 
     auto overlayHeadings = reader->readOverlayHeadings();
     if (overlayHeadings.size() > 0) {
@@ -49,7 +49,7 @@ void writeDSL(const LSDDictionary* reader,
     }
     writer.writeNewLine();
 
-    log.resetProgress(writer.dslFileName().u8string(), headings.size());
+    log.resetProgress(writer.dslFileName().string(), headings.size());
     foreachReferenceSet(headings, [&](auto first, auto last) {
         for (auto it = first; it != last; ++it) {
             const std::u16string& headingText = it->dslText();

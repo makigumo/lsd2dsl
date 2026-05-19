@@ -22,7 +22,6 @@ add_library(${PROJECT_NAME} STATIC
 )
 
 target_link_libraries(${PROJECT_NAME}
-    Boost::system
     Qt6::Core
     Qt6::Core5Compat
     minizip

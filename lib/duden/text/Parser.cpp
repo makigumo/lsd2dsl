@@ -558,14 +558,21 @@ class Parser {
         return false;
     }
 
-    template <class T>
-    void appendPlain(T ch) {
+    void appendPlain(const char ch) {
         _plain += ch;
+    }
+
+    void appendPlain(const std::string& ch) {
+        _plain += ch;
+    }
+
+    void appendPlain(const std::u8string &ch) {
+        _plain += std::string(ch.begin(), ch.end());
     }
 
     void finishPlain() {
         if (!_plain.empty()) {
-            auto run = _context->make<PlainRun>(_plain);
+            const auto run = _context->make<PlainRun>(_plain);
             current()->addRun(run);
         }
         _plain.clear();

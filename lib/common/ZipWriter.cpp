@@ -20,7 +20,7 @@ zlib_filefunc64_def makeZipFileFunc() {
             throw std::runtime_error("reading zip files is not implemented");
         auto typedPath = static_cast<const char*>(filename);
         auto fstr = new std::ofstream(
-            std::filesystem::u8path(typedPath),
+            std::filesystem::path(typedPath),
             std::ios::binary);
         if (fstr->fail())
             throw std::runtime_error(fmt::format("can't open file for writing: {}", typedPath));

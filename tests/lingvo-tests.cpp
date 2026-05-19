@@ -248,12 +248,12 @@ TEST(Tests, collapseVariantHeadingsTest2) {
 
 TEST(Tests, unicodePath) {
     {
-        auto f = openForWriting(u8"éa");
+        auto f = openForWriting("éa");
         f.write("abc", 3);
     }
 
     char buf[4] = {0};
-    std::ifstream f(u8"éa", std::ios::binary);
+    std::ifstream f("éa", std::ios::binary);
     f.read(buf, 10);
     auto read = f.gcount();
     ASSERT_EQ(3, read);
@@ -261,7 +261,7 @@ TEST(Tests, unicodePath) {
 
 TEST(Tests, unicodePath2) {
     char buf[6] = {0};
-    std::ifstream f(testPath(u8"simple_testdict1/é"), std::ios::binary);
+    std::ifstream f(testPath("simple_testdict1/é"), std::ios::binary);
     f.read(buf, 10);
     auto read = f.gcount();
     ASSERT_EQ(5, read);

@@ -291,7 +291,7 @@ class HtmlVisitor : public TextRunVisitor {
 
     void visit(InlineImageRun* run) override {
         auto image = _requestImage(run->name());
-        auto ext = std::filesystem::u8path(run->name()).extension().u8string();
+        auto ext = std::filesystem::path(run->name()).extension().string();
         if (ext.size() < 1)
             throw std::runtime_error("inlining resource without extension");
         boost::algorithm::to_lower(ext);
