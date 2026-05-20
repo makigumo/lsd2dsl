@@ -142,11 +142,11 @@ void decodeBofIdx(std::filesystem::path bofPath,
     common::FileStream fIdx(idxPath);
     auto fBof = std::make_shared<common::FileStream>(bofPath);
     duden::Archive archive(&fIdx, fBof);
-    std::vector<char> vec;
 
     if (fsiPath.empty()) {
+        std::vector<char> vec;
         archive.read(0, -1, vec);
-        auto file = openForWriting(output / "decoded.dump");
+        auto file = openForWriting(output / (idxPath.stem().string() + ".decoded.dump"));
         if (dudenEncoding) {
             auto text = duden::dudenToUtf8(std::string{begin(vec), end(vec)});
             file.write(text.data(), text.size());
@@ -155,11 +155,10 @@ void decodeBofIdx(std::filesystem::path bofPath,
         }
     } else {
         common::FileStream fFsi(fsiPath);
-        auto entries = duden::parseFsiFile(&fFsi);
-        for (auto& entry : entries) {
-            auto file = openForWriting(output / entry.name);
+        for (auto entries = duden::parseFsiFile(&fFsi); const auto& [name, offset, size] : entries) {
+            auto file = openForWriting(output / name);
             std::vector<char> vec;
-            archive.read(entry.offset, entry.size, vec);
+            archive.read(offset, size, vec);
             file.write(vec.data(), vec.size());
         }
     }
@@ -169,7 +168,8 @@ void decodeHic(std::filesystem::path hicPath,
                std::filesystem::path output) {
     common::FileStream fHic(hicPath);
     auto hic = duden::parseHicFile(&fHic);
-    auto f = openForWriting(output / "hic.dump");
+
+    auto f = openForWriting(output / (hicPath.filename().string() + ".dump"));
     int leafNum = 0;
     std::vector<duden::HicLeaf> leafs;
     auto print = [&](auto& print, auto page, int level) -> void {
@@ -321,11 +321,11 @@ int lsd2dsl_main(int argc, char* argv[]) {
     std::string lsdPathStr, lsaPathStr, dudenPathStr, outputPathStr;
     std::string bofPathStr, idxPathStr, fsiPathStr, hicPathStr, adpPathStr, textPathStr;
     int sourceFilter = -1, targetFilter = -1;
-    bool isDumb, verbose;
+    bool isDumb, verbose, showHelp, showVersion, printCodes;
     po::options_description console_desc("Allowed options");
     try {
         console_desc.add_options()
-            ("help", "produce help message")
+            ("help", po::bool_switch(&showHelp), "produce help message")
             ("lsd", po::value(&lsdPathStr), "LSD dictionary to decode")
 #ifdef ENABLE_DUDEN
             ("duden", po::value(&dudenPathStr), "Duden dictionary to decode (.inf file)")
@@ -335,47 +335,45 @@ int lsd2dsl_main(int argc, char* argv[]) {
                 "ignore dictionaries with source language != source-filter")
             ("target-filter", po::value<int>(&targetFilter),
                 "ignore dictionaries with target language != target-filter")
-            ("codes", "print supported languages and their codes")
+            ("codes", po::bool_switch(&printCodes), "print supported languages and their codes")
             ("out", po::value(&outputPathStr), "output directory")
-            ("dumb", "don't combine variant headings and headings "
+            ("dumb", po::bool_switch(&isDumb), "don't combine variant headings and headings "
                      "referencing the same article")
-            ("verbose", "verbose logging")
-            ("version", "print version")
+            ("verbose", po::bool_switch(&verbose), "verbose logging")
+            ("version", po::bool_switch(&showVersion), "print version")
             ;
 
         if (g_debug) {
-            console_desc.add_options()
-                ("bof", po::value(&bofPathStr), "Duden BOF file path")
-                ("idx", po::value(&idxPathStr), "Duden IDX file path")
+            po::options_description debug_options("Debug options");
+            debug_options.add_options()
+                ("bof", po::value(&bofPathStr), "Duden BOF file path, requires IDX file")
+                ("idx", po::value(&idxPathStr), "Duden IDX file path, requires BOF file")
                 ("fsi", po::value(&fsiPathStr), "Duden FSI file path")
                 ("hic", po::value(&hicPathStr), "Duden HIC file path")
                 ("adp", po::value(&adpPathStr), "Duden ADP file path")
                 ("text", po::value(&textPathStr), "Duden decoded text file path")
-                ("duden-info", "Print dictionary info and return")
-                ("duden-utf", "Decode Duden to Utf");
+                ("duden-info", po::bool_switch(&dudenPrintInfo), "Print dictionary info and return")
+                ("duden-utf", po::bool_switch(&dudenEncoding),"Decode Duden encoding to UTF");
+            console_desc.add(debug_options);
         }
 
         po::variables_map console_vm;
         po::store(po::parse_command_line(argc, argv, console_desc), console_vm);
-        if (console_vm.count("help")) {
+        po::notify(console_vm);
+
+        if (showHelp) {
             fmt::print("{}", fmt::streamed(console_desc));
             return 0;
         }
-        if (console_vm.count("codes")) {
+        if (printCodes) {
             printLanguages();
             return 0;
         }
-        if (console_vm.count("version")) {
+        if (showVersion) {
             fmt::print("lsd2dsl version {}\n", g_version);
             return 0;
         }
-        isDumb = console_vm.count("dumb");
-        verbose = console_vm.count("verbose");
-#ifdef ENABLE_DUDEN
-        dudenEncoding = console_vm.count("duden-utf");
-        dudenPrintInfo = console_vm.count("duden-info");
-#endif
-        po::notify(console_vm);
+
     } catch(std::exception& e) {
         fmt::print("can't parse program options:\n{}\n\n{}", e.what(), fmt::streamed(console_desc));
         return 1;
@@ -460,7 +458,7 @@ int wmain(int argc, wchar_t* wargv[]) {
     return lsd2dsl_main(argc, &argv[0]);
 }
 #else
-int main(int argc, char* argv[]) {
+int main(const int argc, char* argv[]) {
     return lsd2dsl_main(argc, argv);
 }
 #endif
